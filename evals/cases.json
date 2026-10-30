@@ -1,0 +1,78 @@
+[
+  {
+    "id": "default-english-chinese-request",
+    "prompt": "/educational-video 制作一个 2 分钟的 Amazon SQS 视频。",
+    "expect": {"mode": "full", "language": "en"},
+    "checks": ["Uses English captions despite Chinese request wording", "Verifies Standard queue scope and duplicate delivery", "Does not impose a preview approval gate"]
+  },
+  {
+    "id": "simple-chinese-trigger",
+    "prompt": "/educational-video 中文 制作一个 3 分钟的 AWS Lambda 视频。",
+    "expect": {"mode": "full", "language": "zh"},
+    "checks": ["Reads Chinese workflow", "Uses Chinese captions while retaining API names", "Scopes execution environments and retries to the chosen invocation model"]
+  },
+  {
+    "id": "prompt-only-flag",
+    "prompt": "/educational-video --lang zh 只写一个 3 分半钟的 Amazon Bedrock 视频 prompt。",
+    "expect": {"mode": "prompt-only", "language": "zh"},
+    "checks": ["Returns self-contained prompt with timed scenes totaling 210 seconds", "Does not install dependencies or render", "Distinguishes Retrieve then Converse from RetrieveAndGenerate", "Contains primary sources and acceptance criteria"]
+  },
+  {
+    "id": "preview-only",
+    "prompt": "/educational-video Make only a 10-second preview about why the sky is blue; wait for my review.",
+    "expect": {"mode": "preview", "language": "en"},
+    "checks": ["Plans a full-episode outline but renders only the requested preview", "Does not read AWS cases", "Stops at the requested review point"]
+  },
+  {
+    "id": "extension-retains-language",
+    "context": "Provide a real existing project fixture with brief.md specifying Chinese, a 10-second opening, and an editable timeline. Do not pretend the fixture exists if absent.",
+    "prompt": "/educational-video Extend this video to 2 minutes. Keep the approved opening and style.",
+    "expect": {"mode": "extend", "language": "zh"},
+    "checks": ["Reads the supplied project", "Retains its Chinese language", "Adds meaningful mechanism/failure scenes, not slow playback", "Preserves the opening when technically possible"]
+  },
+  {
+    "id": "english-override",
+    "context": "Existing project's brief is Chinese.",
+    "prompt": "/educational-video --lang en Extend the existing video to 3 minutes and translate the captions to English.",
+    "expect": {"mode": "extend", "language": "en"},
+    "checks": ["Explicit English overrides saved Chinese", "Retimes translated captions for readability"]
+  },
+  {
+    "id": "vertical-narrated-non-aws",
+    "prompt": "/educational-video Make a 60-second 9:16 video explaining photosynthesis to children, with narration.",
+    "expect": {"mode": "full", "language": "en"},
+    "checks": ["Overrides aspect ratio, duration, audience, and narration defaults", "Uses appropriate primary sources without AWS references", "Reports unavailable voice capability rather than claiming narration exists"]
+  },
+  {
+    "id": "conflicting-language",
+    "prompt": "/educational-video --lang en --lang zh Make a 2-minute OpenSearch video.",
+    "expect": {"mode": "clarify", "language": null},
+    "checks": ["Asks one focused language question before localized production", "Does not silently choose between contradictory explicit flags"]
+  },
+  {
+    "id": "quoted-language-word",
+    "prompt": "/educational-video Write a prompt for a video titled 'Learning 中文 characters' for English-speaking beginners.",
+    "expect": {"mode": "prompt-only", "language": "en"},
+    "checks": ["Quoted 中文 is topic content, not a language selector", "Does not render"]
+  },
+  {
+    "id": "blocked-renderer",
+    "context": "Test environment permits files but has no usable renderer and prohibits dependency downloads.",
+    "prompt": "/educational-video Make a 2-minute DynamoDB explainer.",
+    "expect": {"mode": "full", "language": "en"},
+    "checks": ["Completes feasible storyboard/source work", "Reports the exact rendering blocker and unperformed checks", "Does not claim a final MP4 exists or install around restrictions"]
+  },
+  {
+    "id": "missing-style-reference",
+    "context": "No previous video or source project is provided.",
+    "prompt": "/educational-video Make a 2-minute NLB video in the same style as my last video.",
+    "expect": {"mode": "full", "language": "en"},
+    "checks": ["Does not claim to have inspected missing history", "States available style assumptions or asks for an essential reference", "Does not animate established TCP connections migrating between targets"]
+  },
+  {
+    "id": "unrelated-request",
+    "prompt": "Fix the SQL query in this repository; do not make a video.",
+    "expect": {"mode": "not-invoked", "language": null},
+    "checks": ["Does not activate the video workflow for an unrelated request"]
+  }
+]
